@@ -60,6 +60,11 @@ class Setting {
      */
     protected $settings;
 
+    /**
+     * Create the Setting instance
+     * @param string $path      The path to the file
+     * @param string $filename  The filename
+     */
     public function __construct($path, $filename)
     {
         $this->path     = $path;
