@@ -118,45 +118,12 @@ class Setting {
 
     /**
      * Store the passed value in to the json file
-     * @param  mixed $value The value(s) to be stored
+     * @param  array $value The value(s) to be stored
      * @return void
      */
     public function put($value)
     {
-        foreach ($value as $key => $val)
-        {
-            if (isset($this->settings[$key]) and is_array($val))
-            {
-                foreach($val as $key2 => $val2)
-                {
-                    if (isset($this->settings[$key]))
-                    {
-                        $temp  = is_array($this->settings[$key]) ? $this->settings[$key] : array($key2 => $val2);
-                        $temp1 = array();
-
-                        $temp1  = array_add($temp1, $key2, $val2);
-
-                        $this->settings[$key] = array_merge($temp, $temp1);
-                    }
-                    else
-                    {
-                        $this->settings = array_add($this->settings, $key2, $val2);
-                    }
-                }
-            }
-            else
-            {
-                if (isset($this->settings[$key]))
-                {
-                    $this->settings[$key] = $val;
-                }
-                else
-                {
-                    $this->settings = array_add($this->settings, $key, $val);
-                }
-            }
-        }
-
+        $this->settings = $this->build($this->settings, $value);
         $this->save($this->path, $this->filename);
         $this->load($this->path, $this->filename);
     }
@@ -195,7 +162,30 @@ class Setting {
     }
 
     /**
-     * Load the file in to $this->settings so values can be used imediately
+     * Recursively build the $this->settings array
+     * @param  array $array1 The current $this->settings array
+     * @param  array $array2 The array of values to add
+     * @return array         The new array with all keys and values merged or updated
+     */
+    public function build($array1, $array2)
+    {
+        foreach($array2 as $key => $val)
+        {
+            if(array_key_exists($key, $array1) && is_array($val))
+            {
+                $array1[$key] = $this->build($array1[$key], $array2[$key]);
+            }
+            else
+            {
+                $array1[$key] = $val;
+            }
+        }
+
+        return $array1;
+    }
+
+    /**
+     * Load the file in to $this->settings so values can be used immediately
      * @param  string $path     The path to be used
      * @param  string $filename The filename to be used
      * @return \Philf\Setting\Setting
@@ -208,6 +198,10 @@ class Setting {
         if (is_file($this->path.'/'.$this->filename))
         {
             $this->settings = json_decode(file_get_contents($this->path.'/'.$this->filename), true);
+        }
+        else
+        {
+            $this->settings = array();
         }
 
         return $this;
