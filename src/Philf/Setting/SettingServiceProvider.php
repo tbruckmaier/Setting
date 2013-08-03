@@ -30,9 +30,9 @@ class SettingServiceProvider extends ServiceProvider {
     {
         $this->app['setting'] = $this->app->share(function($app)
         {
-            $path     = $this->app['config']->get('setting::setting.path');
-            $filename = $this->app['config']->get('setting::setting.filename');
-
+            $path     = $app['config']['setting::setting.path'];
+            $filename = $app['config']['setting::setting.filename'];
+            
             return new Setting($path, $filename);
         });
 
