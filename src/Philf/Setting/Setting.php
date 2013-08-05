@@ -163,25 +163,32 @@ class Setting {
 
     /**
      * Recursively build the $this->settings array
-     * @param  array $array1 The current $this->settings array
-     * @param  array $array2 The array of values to add
+     * @param  mixed $value1 The current $this->settings array or the recusive value
+     * @param  mixed $value2 The array of values to add or the recusive value
      * @return array         The new array with all keys and values merged or updated
      */
-    public function build($array1, $array2)
-    {
-        foreach($array2 as $key => $val)
+    public function build($value1, $value2)
+    {        
+        foreach($value2 as $key => $val)
         {
-            if(array_key_exists($key, $array1) && is_array($val))
+            if (is_array($value1))
             {
-                $array1[$key] = $this->build($array1[$key], $array2[$key]);
+                if(array_key_exists($key, $value1) and is_array($val))
+                {
+                    $value1[$key] = $this->build($value1[$key], $value2[$key]);
+                }
+                else
+                {
+                    $value1[$key] = $val;
+                }
             }
             else
             {
-                $array1[$key] = $val;
+                $value1 = array($key => $val);
             }
         }
-
-        return $array1;
+        
+        return $value1;
     }
 
     /**
