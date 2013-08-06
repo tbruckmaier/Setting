@@ -36,7 +36,7 @@ Single dimension
 
     set:     Setting::set(array('name' => 'Phil'))
     put:     Setting::put(array('name' => 'Phil'))
-    store:   Setting::store('names.firstname', 'Phil')
+    store:   Setting::store('name', 'Phil')
     get:     Setting::get('name')
     forget:  Setting::forget('name')
     has:     Setting::has('name')
@@ -45,6 +45,8 @@ Multi dimensional
 
     set:     Setting::set(array('names' => array('firstname' => 'Phil', 'surname' => 'F')))
     put:     Setting::put(array('names' => array('firstname' => 'Phil', 'surname' => 'F')))
+    store:   Setting::store('names.firstname', 'Phil');
+    store:   Setting::store('names', array('firstname' => 'Phil', 'surname' => 'F'));
     get:     Setting::get('names.firstname')
     forget:  Setting::forget(array('names' => 'surname'))
     has:     Setting::has('names.firstname')
