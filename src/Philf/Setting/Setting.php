@@ -110,7 +110,7 @@ class Setting {
             return $this->array_get($this->settings, $searchKey);
         }
 
-        if(!is_null($this->fallback) && $this->fallback->fallbackHas($searchKey))
+        if(!is_null($this->fallback) and $this->fallback->fallbackHas($searchKey))
         {
             return $this->fallback->fallbackGet($searchKey);
         }
@@ -276,7 +276,9 @@ class Setting {
 
         $toWalk = explode('.',$key);
         $workArray = &$array;
-        foreach ($toWalk as $segment) {
+
+        foreach ($toWalk as $segment)
+        {
             if($segment === end($toWalk))
             {
                 return $workArray[$segment];
@@ -306,7 +308,9 @@ class Setting {
 
         $toWalk = explode('.',$key);
         $workArray = &$array;
-        foreach ($toWalk as $segment) {
+
+        foreach ($toWalk as $segment)
+        {
             if($segment === end($toWalk))
             {
                 $workArray[$segment] = $value;
