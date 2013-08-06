@@ -105,9 +105,11 @@ class Setting {
      */
     public function get($searchKey)
     {
+        if($this->settings != $this->array_get($this->settings, $searchKey))
+            return $this->array_get($this->settings, $searchKey);
         if(!is_null($this->fallback) && $this->fallback->fallbackHas($searchKey))
             return $this->fallback->fallbackGet($searchKey);
-        return $this->array_get($this->settings, $searchKey);
+        return null;
     }
 
     /**
@@ -175,9 +177,9 @@ class Setting {
      */
     public function has($searchKey)
     {
-        if(!$this->array_get($this->settings, $searchKey) && !is_null($this->fallback))
+        if($this->settings == $this->array_get($this->settings, $searchKey) && !is_null($this->fallback))
             return $this->fallback->fallbackHas($searchKey);
-        return $this->array_get($this->settings, $searchKey) ? true : false;
+        return $this->settings == $this->array_get($this->settings, $searchKey) ? false : true;
     }
 
     /**
@@ -187,7 +189,7 @@ class Setting {
      * @return array         The new array with all keys and values merged or updated
      */
     public function build($value1, $value2)
-    {        
+    {
         foreach($value2 as $key => $val)
         {
             if (is_array($value1))
@@ -206,7 +208,7 @@ class Setting {
                 $value1 = array($key => $val);
             }
         }
-        
+
         return $value1;
     }
 
@@ -260,21 +262,22 @@ class Setting {
      */
     function array_get($array, $key)
     {
-        if (is_null($key)) return $array;
+        if (is_null($key) || empty($key)) return $array;
 
         if (isset($array[$key])) return $array[$key];
 
-        foreach (explode('.', $key) as $segment)
-        {
-            if ( ! is_array($array) or ! array_key_exists($segment, $array))
+        $toWalk = explode('.',$key);
+        $workArray = &$array;
+        foreach ($toWalk as $segment) {
+            if($segment === end($toWalk))
             {
-                return $array;
+                return $workArray[$segment];
             }
-
-            $array = $array[$segment];
+            if(!array_key_exists($segment,$workArray) || !is_array($workArray[$segment]))
+                return $array;
+            $workArray = &$workArray[$segment];
         }
-
-        return $array;
+        return $workArray;
     }
 
     /**

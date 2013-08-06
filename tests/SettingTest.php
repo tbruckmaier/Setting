@@ -54,7 +54,7 @@ class SettingTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('e', $this->setting->array_get($array, 'c.d'));
         $this->assertEquals(array('d' => 'e'), $this->setting->array_get($array, 'c'));
         $this->assertEquals($array, $this->setting->array_get($array,''));
-        $this->assertEquals('b', $this->setting->array_get($array,'a.b.c.d'));
+        $this->assertEquals($array, $this->setting->array_get($array,'a.b.c.d'));
     }
 
     /**
@@ -107,6 +107,11 @@ class SettingTest extends PHPUnit_Framework_TestCase {
         $this->setting->store('testCase.foo', 'bar');
         $this->assertTrue($this->setting->has('testCase.foo'));
         $this->assertEquals('bar', $this->setting->get('testCase.foo'));
+        $this->assertEquals(array('foo' => 'bar'), $this->setting->get('testCase'));
+
+        $this->setting->store('a.b', 'c');
+        $this->assertTrue($this->setting->has('a'));
+        $this->assertEquals(array('b' => 'c'), $this->setting->get('a'));
     }
 
 }
