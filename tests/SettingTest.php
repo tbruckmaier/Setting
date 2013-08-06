@@ -112,6 +112,9 @@ class SettingTest extends PHPUnit_Framework_TestCase {
         $this->setting->store('a.b', 'c');
         $this->assertTrue($this->setting->has('a'));
         $this->assertEquals(array('b' => 'c'), $this->setting->get('a'));
+
+        $this->setting->store('', 'FOOBAR');
+        $this->assertNull($this->setting->get(''));
     }
 
 }

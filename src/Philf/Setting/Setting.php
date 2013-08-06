@@ -106,9 +106,15 @@ class Setting {
     public function get($searchKey)
     {
         if($this->settings != $this->array_get($this->settings, $searchKey))
+        {
             return $this->array_get($this->settings, $searchKey);
+        }
+
         if(!is_null($this->fallback) && $this->fallback->fallbackHas($searchKey))
+        {
             return $this->fallback->fallbackGet($searchKey);
+        }
+
         return null;
     }
 
@@ -178,7 +184,9 @@ class Setting {
     public function has($searchKey)
     {
         if($this->settings == $this->array_get($this->settings, $searchKey) && !is_null($this->fallback))
+        {
             return $this->fallback->fallbackHas($searchKey);
+        }
         return $this->settings == $this->array_get($this->settings, $searchKey) ? false : true;
     }
 
@@ -274,7 +282,9 @@ class Setting {
                 return $workArray[$segment];
             }
             if(!array_key_exists($segment,$workArray) || !is_array($workArray[$segment]))
+            {
                 return $array;
+            }
             $workArray = &$workArray[$segment];
         }
         return $workArray;
@@ -303,7 +313,9 @@ class Setting {
                 return $array;
             }
             if(array_key_exists($segment,$workArray) && !is_array($workArray[$segment]))
+            {
                 $workArray[$segment] = array();
+            }
             $workArray = &$workArray[$segment];
         }
         return $array;
