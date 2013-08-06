@@ -183,7 +183,7 @@ class Setting {
      */
     public function has($searchKey)
     {
-        if($this->settings == $this->array_get($this->settings, $searchKey) && !is_null($this->fallback))
+        if($this->settings == $this->array_get($this->settings, $searchKey) and !is_null($this->fallback))
         {
             return $this->fallback->fallbackHas($searchKey);
         }
@@ -270,7 +270,7 @@ class Setting {
      */
     function array_get($array, $key)
     {
-        if (is_null($key) || empty($key)) return $array;
+        if (is_null($key) or empty($key)) return $array;
 
         if (isset($array[$key])) return $array[$key];
 
@@ -281,7 +281,7 @@ class Setting {
             {
                 return $workArray[$segment];
             }
-            if(!array_key_exists($segment,$workArray) || !is_array($workArray[$segment]))
+            if(!array_key_exists($segment,$workArray) or !is_array($workArray[$segment]))
             {
                 return $array;
             }
@@ -302,7 +302,7 @@ class Setting {
      */
     function array_set(&$array, $key, $value)
     {
-        if (is_null($key) || is_null($value)) return $array;
+        if (is_null($key) or is_null($value)) return $array;
 
         $toWalk = explode('.',$key);
         $workArray = &$array;
@@ -312,7 +312,7 @@ class Setting {
                 $workArray[$segment] = $value;
                 return $array;
             }
-            if(array_key_exists($segment,$workArray) && !is_array($workArray[$segment]))
+            if(array_key_exists($segment,$workArray) and !is_array($workArray[$segment]))
             {
                 $workArray[$segment] = array();
             }
