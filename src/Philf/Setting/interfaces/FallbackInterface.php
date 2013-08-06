@@ -1,6 +1,4 @@
-<?php
-
-namespace Philf\Setting\interfaces;
+<?php namespace Philf\Setting\interfaces;
 
 /**
  * Class FallbackInterface

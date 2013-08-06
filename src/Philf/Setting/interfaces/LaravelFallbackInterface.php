@@ -1,13 +1,11 @@
-<?php
-
-namespace Philf\Setting\interfaces;
+<?php namespace Philf\Setting\interfaces;
 
 
 /**
  * Class LaravelFallbackInterface
  * @package Philf\Setting\interfaces
  */
-class LaravelFallbackInterface implements FallbackInterface{
+class LaravelFallbackInterface implements FallbackInterface {
 
     /**
      * @param $key
