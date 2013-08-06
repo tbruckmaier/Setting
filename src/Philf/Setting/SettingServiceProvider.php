@@ -1,6 +1,7 @@
 <?php namespace Philf\Setting;
 
 use Illuminate\Support\ServiceProvider;
+use Philf\Setting\interfaces\LaravelFallbackInterface;
 
 class SettingServiceProvider extends ServiceProvider {
 
@@ -33,7 +34,7 @@ class SettingServiceProvider extends ServiceProvider {
             $path     = $app['config']['setting::setting.path'];
             $filename = $app['config']['setting::setting.filename'];
             
-            return new Setting($path, $filename);
+            return new Setting($path, $filename, new LaravelFallbackInterface());
         });
 
         $this->app->booting(function()

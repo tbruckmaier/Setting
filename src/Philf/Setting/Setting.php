@@ -64,11 +64,13 @@ class Setting {
      * Create the Setting instance
      * @param string $path      The path to the file
      * @param string $filename  The filename
+     * @param interfaces\FallbackInterface $fallback
      */
-    public function __construct($path, $filename)
+    public function __construct($path, $filename, $fallback = null)
     {
         $this->path     = $path;
         $this->filename = $filename;
+        $this->fallback = $fallback;
 
         // Load the file and store the contents in $this->settings
         $this->load($this->path, $this->filename);
@@ -103,6 +105,8 @@ class Setting {
      */
     public function get($searchKey)
     {
+        if(!$this->has($searchKey) && !is_null($this->fallback))
+            return $this->fallback->fallbackGet($searchKey);
         return $this->array_get($this->settings, $searchKey);
     }
 
@@ -171,6 +175,8 @@ class Setting {
      */
     public function has($searchKey)
     {
+        if(!$this->array_get($this->settings, $searchKey) && !is_null($this->fallback))
+            return $this->fallback->fallbackHas($searchKey);
         return $this->array_get($this->settings, $searchKey) ? true : false;
     }
 
