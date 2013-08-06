@@ -105,7 +105,7 @@ class Setting {
      */
     public function get($searchKey)
     {
-        if(!$this->has($searchKey) && !is_null($this->fallback))
+        if(!is_null($this->fallback) && $this->fallback->fallbackHas($searchKey))
             return $this->fallback->fallbackGet($searchKey);
         return $this->array_get($this->settings, $searchKey);
     }
