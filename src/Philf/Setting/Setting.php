@@ -103,7 +103,7 @@ class Setting {
      */
     public function get($searchKey)
     {
-        return array_get($this->settings, $searchKey);
+        return $this->array_get($this->settings, $searchKey);
     }
 
     /**
@@ -122,6 +122,18 @@ class Setting {
      * @return void
      */
     public function put($value)
+    {
+        $this->settings = $this->build($this->settings, $value);
+        $this->save($this->path, $this->filename);
+        $this->load($this->path, $this->filename);
+    }
+
+    /**
+     * Store the passed value in to the json file
+     * @param  array $value The value(s) to be stored
+     * @return void
+     */
+    public function store($key, $value)
     {
         $this->settings = $this->build($this->settings, $value);
         $this->save($this->path, $this->filename);
@@ -158,7 +170,7 @@ class Setting {
      */
     public function has($searchKey)
     {
-        return array_get($this->settings, $searchKey) ? true : false;
+        return $this->array_get($this->settings, $searchKey) ? true : false;
     }
 
     /**
@@ -228,5 +240,62 @@ class Setting {
         $fh = fopen($this->path.'/'.$this->filename, 'w+');
         fwrite($fh, json_encode($this->settings, JSON_UNESCAPED_UNICODE));
         fclose($fh);
+    }
+
+    /**
+     * Get an item from an array using "dot" notation.
+     * Stole it from Illuminate/Support/helpers.php
+     *
+     * @param  array $array
+     * @param  string $key
+     * @internal param mixed $default
+     * @return mixed
+     */
+    function array_get($array, $key)
+    {
+        if (is_null($key)) return $array;
+
+        if (isset($array[$key])) return $array[$key];
+
+        foreach (explode('.', $key) as $segment)
+        {
+            if ( ! is_array($array) or ! array_key_exists($segment, $array))
+            {
+                return $array;
+            }
+
+            $array = $array[$segment];
+        }
+
+        return $array;
+    }
+
+    /**
+     * Set an item in an array using "dot" notation.
+     * This method will manipulate the given array
+     *
+     * @param  array $array
+     * @param  string $key
+     * @param $value mixed The value to add
+     * @internal param mixed $default
+     * @return mixed
+     */
+    function array_set(&$array, $key, $value)
+    {
+        if (is_null($key) || is_null($value)) return $array;
+
+        $toWalk = explode('.',$key);
+        $workArray = &$array;
+        foreach ($toWalk as $segment) {
+            if($segment === end($toWalk))
+            {
+                $workArray[$segment] = $value;
+                return $array;
+            }
+            if(array_key_exists($segment,$workArray) && !is_array($workArray[$segment]))
+                $workArray[$segment] = array();
+            $workArray = &$workArray[$segment];
+        }
+        return $array;
     }
 }
