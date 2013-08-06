@@ -8,6 +8,8 @@ This package was designed not to replace the config solution currently offered b
 
 By default the data is stored in app_path().'/storage/meta/setting.json' but this can eaisly be changed either in the config file or on the fly realtime.
 
+This package also provides a fallback for the Laravel Config facade, you can set it in the config, if the key is not found in the json file it will look it up in the Config facade.
+
 ## Installation
 Require this package in your composer.json:
 
@@ -34,6 +36,7 @@ Single dimension
 
     set:     Setting::set(array('name' => 'Phil'))
     put:     Setting::put(array('name' => 'Phil'))
+    store:   Setting::store('names.firstname', 'Phil')
     get:     Setting::get('name')
     forget:  Setting::forget('name')
     has:     Setting::has('name')

@@ -34,7 +34,7 @@ class SettingServiceProvider extends ServiceProvider {
             $path     = $app['config']['setting::setting.path'];
             $filename = $app['config']['setting::setting.filename'];
             
-            return new Setting($path, $filename, new LaravelFallbackInterface());
+            return new Setting($path, $filename, $app['config']['setting::setting.fallback'] ? new LaravelFallbackInterface() : null);
         });
 
         $this->app->booting(function()
