@@ -15,7 +15,7 @@ class LaravelFallbackInterface implements FallbackInterface{
      */
     public function fallbackGet($key)
     {
-        return App::make('config')->get($key);
+        return \App::make('config')->get($key);
     }
 
     /**
@@ -24,6 +24,6 @@ class LaravelFallbackInterface implements FallbackInterface{
      */
     public function fallbackHas($key)
     {
-        return App::make('config')->has($key);
+        return \App::make('config')->has($key);
     }
 }
