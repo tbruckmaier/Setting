@@ -35,15 +35,15 @@ set is an alias for put so you can use either
 
 Single dimension
 
-    set:     Setting::store('name', 'Phil')
+    set:     Setting::set('name', 'Phil')
     get:     Setting::get('name')
     forget:  Setting::forget('name')
     has:     Setting::has('name')
 
 Multi dimensional
 
-    set:     Setting::store('names.firstname', 'Phil');
-    set:     Setting::store('names', array('firstname' => 'Phil', 'surname' => 'F'));
+    set:     Setting::set('names.firstname', 'Phil');
+    set:     Setting::set('names', array('firstname' => 'Phil', 'surname' => 'F'));
     get:     Setting::get('names.firstname')
     forget:  Setting::forget(array('names' => 'surname'))
     has:     Setting::has('names.firstname')

@@ -63,7 +63,7 @@ class SettingTest extends PHPUnit_Framework_TestCase {
     public function testArray_set()
     {
         $array = array();
-        //set
+
         $this->setting->array_set($array,null,1);
         $this->assertEquals(array(),$array);
 
@@ -102,7 +102,7 @@ class SettingTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($test,$test2);
     }
 
-    public function testStore()
+    public function testSet()
     {
         $this->setting->set('testCase.foo', 'bar');
         $this->assertTrue($this->setting->has('testCase.foo'));
@@ -115,6 +115,29 @@ class SettingTest extends PHPUnit_Framework_TestCase {
 
         $this->setting->set('', 'FOOBAR');
         $this->assertNull($this->setting->get(''));
+
+        $this->setting->set('1.2.3.4.5.6.7.8', 'f');
+        $this->assertTrue($this->setting->has('1.2.3.4'));
+
+        $this->setting->set('1.2.3.4.5.6.7.8.', 'f');
+        $this->assertTrue($this->setting->has('1.2.3.4.5.6.7.8.'));
+        $this->assertEquals('f',$this->setting->get('1.2.3.4.5.6.7.8.'));
     }
 
+    public function testForget()
+    {
+        $this->setting->set('a.b.c.d.e', 'f');
+        $this->setting->forget('a.b.c');
+        $this->assertFalse($this->setting->has('a.b.c'));
+
+        $this->setting->set('1.2.3.4.5.6', 'f');
+        $this->setting->forget('1.2.3.4.5');
+        $this->assertFalse($this->setting->has('1.2.3.4.5.6'));
+        $this->assertTrue($this->setting->has('1.2.3.4'));
+
+        $this->setting->set('1.2.3.4.5.6.', 'f');
+        $this->setting->forget('1.2.3.4.5.6.');
+        $this->assertFalse($this->setting->has('1.2.3.4.5.6.'));
+        $this->assertTrue($this->setting->has('1.2.3.4.5'));
+    }
 }

@@ -124,30 +124,19 @@ class Setting {
      */
     public function set($key, $value)
     {
-        array_set($this->settings,$key,$value);
+        $this->array_set($this->settings,$key,$value);
         $this->save($this->path, $this->filename);
         $this->load($this->path, $this->filename);
     }
 
     /**
      * Forget the value(s) currently stored
-     * @param  mixed $deleteKey The value(s) to be removed
+     * @param  mixed $deleteKey The value(s) to be removed (dot notation)
      * @return void
      */
     public function forget($deleteKey)
     {
-        if (is_array($deleteKey))
-        {
-            foreach($deleteKey as $key => $val)
-            {
-                unset($this->settings[$key][$val]);
-            }
-        }
-        else
-        {
-            unset($this->settings[$deleteKey]);
-        }
-
+        $this->array_delete($deleteKey);
         $this->save($this->path, $this->filename);
         $this->load($this->path, $this->filename);
     }
@@ -216,7 +205,8 @@ class Setting {
      */
     function array_get($array, $key)
     {
-        if (is_null($key) or empty($key)) return $array;
+        if (is_null($key) or is_null($key) or empty($key)) return $array;
+        $key = trim($key,'.');
 
         if (isset($array[$key])) return $array[$key];
 
@@ -227,7 +217,14 @@ class Setting {
         {
             if($segment === end($toWalk))
             {
-                return $workArray[$segment];
+                if(array_key_exists($segment,$workArray))
+                {
+                    return $workArray[$segment];
+                }
+                else
+                {
+                    return $array;
+                }
             }
             if(!array_key_exists($segment,$workArray) or !is_array($workArray[$segment]))
             {
@@ -250,7 +247,8 @@ class Setting {
      */
     function array_set(&$array, $key, $value)
     {
-        if (is_null($key) or is_null($value)) return $array;
+        if (is_null($key) or is_null($value) or empty($key)) return $array;
+        $key = trim($key,'.');
 
         $toWalk = explode('.',$key);
         $workArray = &$array;
@@ -262,12 +260,34 @@ class Setting {
                 $workArray[$segment] = $value;
                 return $array;
             }
-            if(array_key_exists($segment,$workArray) and !is_array($workArray[$segment]))
+
+            if((array_key_exists($segment,$workArray) and !is_array($workArray[$segment])) or (!array_key_exists($segment,$workArray)))
             {
                 $workArray[$segment] = array();
             }
             $workArray = &$workArray[$segment];
         }
         return $array;
+    }
+
+    private function array_delete($key)
+    {
+        $key = trim($key,'.');
+        $toWalk = explode('.',$key);
+        $workArray = &$this->settings;
+
+        foreach($toWalk as $segment)
+        {
+            if($segment === end($toWalk))
+            {
+                unset($workArray[$segment]);
+                return;
+            }
+            if(!array_key_exists($segment,$workArray) or !is_array($workArray[$segment]))
+            {
+                return;
+            }
+            $workArray = &$workArray[$segment];
+        }
     }
 }
