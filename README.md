@@ -26,6 +26,7 @@ Config
     return array(
     'path'     => app_path().'/storage/meta',
     'filename' => 'setting.json',
+    'fallback' => true,
     );
 
 It's simple to use - just think arrays :)
@@ -34,34 +35,30 @@ set is an alias for put so you can use either
 
 Single dimension
 
-    set:     Setting::set(array('name' => 'Phil'))
-    put:     Setting::put(array('name' => 'Phil'))
-    store:   Setting::store('name', 'Phil')
+    set:     Setting::store('name', 'Phil')
     get:     Setting::get('name')
     forget:  Setting::forget('name')
     has:     Setting::has('name')
 
 Multi dimensional
 
-    set:     Setting::set(array('names' => array('firstname' => 'Phil', 'surname' => 'F')))
-    put:     Setting::put(array('names' => array('firstname' => 'Phil', 'surname' => 'F')))
-    store:   Setting::store('names.firstname', 'Phil');
-    store:   Setting::store('names', array('firstname' => 'Phil', 'surname' => 'F'));
+    set:     Setting::store('names.firstname', 'Phil');
+    set:     Setting::store('names', array('firstname' => 'Phil', 'surname' => 'F'));
     get:     Setting::get('names.firstname')
     forget:  Setting::forget(array('names' => 'surname'))
     has:     Setting::has('names.firstname')
 
 Using a different path (make sure the path exists and is writable) *
 
-    Setting::path(app_path().'/storage/meta/sub')->set(array('names2' => array('firstname' => 'Phil', 'surname' => 'F')));
+    Setting::path(app_path().'/storage/meta/sub')->set('names2', array('firstname' => 'Phil', 'surname' => 'F'));
 
 Using a different filename
 
-    Setting::filename('setting2.json')->set(array('names2' => array('firstname' => 'Phil', 'surname' => 'F')));
+    Setting::filename('setting2.json')->set('names2', array('firstname' => 'Phil', 'surname' => 'F'));
 
 Using both a different path and filename (make sure the path exists and is writable)
 
-    Setting::path(app_path().'/storage/meta/sub')->filename('dummy.json')->set(array('names2' => array('firstname' => 'Phil', 'surname' => 'F')));
+    Setting::path(app_path().'/storage/meta/sub')->filename('dummy.json')->set('names2', array('firstname' => 'Phil', 'surname' => 'F'));
 
 ## License
 

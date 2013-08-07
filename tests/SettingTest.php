@@ -104,16 +104,16 @@ class SettingTest extends PHPUnit_Framework_TestCase {
 
     public function testStore()
     {
-        $this->setting->store('testCase.foo', 'bar');
+        $this->setting->set('testCase.foo', 'bar');
         $this->assertTrue($this->setting->has('testCase.foo'));
         $this->assertEquals('bar', $this->setting->get('testCase.foo'));
         $this->assertEquals(array('foo' => 'bar'), $this->setting->get('testCase'));
 
-        $this->setting->store('a.b', 'c');
+        $this->setting->set('a.b', 'c');
         $this->assertTrue($this->setting->has('a'));
         $this->assertEquals(array('b' => 'c'), $this->setting->get('a'));
 
-        $this->setting->store('', 'FOOBAR');
+        $this->setting->set('', 'FOOBAR');
         $this->assertNull($this->setting->get(''));
     }
 

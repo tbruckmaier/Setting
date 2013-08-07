@@ -17,15 +17,13 @@
  * use Setting (If you are using namespaces)
  *
  * Single dimension
- * set:     Setting::set(array('name' => 'Phil'))
- * put:     Setting::put(array('name' => 'Phil'))
+ * set:     Setting::set('name', 'Phil'))
  * get:     Setting::get('name')
  * forget:  Setting::forget('name')
  * has:     Setting::has('name')
  *
  * Multi dimensional
- * set:     Setting::set(array('names' => array('firstname' => 'Phil', 'surname' => 'F')))
- * put:     Setting::put(array('names' => array('firstname' => 'Phil', 'surname' => 'F')))
+ * set:     Setting::set('names' , array('firstname' => 'Phil', 'surname' => 'F'))
  * get:     Setting::get('names.firstname')
  * forget:  Setting::forget(array('names' => 'surname'))
  * has:     Setting::has('names.firstname')
@@ -118,35 +116,13 @@ class Setting {
         return null;
     }
 
-    /**
-     * An alias for put
-     * @param mixed $value The value(s) to be stored
-     * @return void
-     */
-    public function set($value)
-    {
-        $this->put($value);
-    }
-
-    /**
-     * Store the passed value in to the json file
-     * @param  array $value The value(s) to be stored
-     * @return void
-     */
-    public function put($value)
-    {
-        $this->settings = $this->build($this->settings, $value);
-        $this->save($this->path, $this->filename);
-        $this->load($this->path, $this->filename);
-    }
-
-    /**
+     /**
      * Store the passed value in to the json file
      * @param $key
      * @param  mixed $value The value(s) to be stored
      * @return void
      */
-    public function store($key, $value)
+    public function set($key, $value)
     {
         array_set($this->settings,$key,$value);
         $this->save($this->path, $this->filename);
@@ -188,36 +164,6 @@ class Setting {
             return $this->fallback->fallbackHas($searchKey);
         }
         return $this->settings == $this->array_get($this->settings, $searchKey) ? false : true;
-    }
-
-    /**
-     * Recursively build the $this->settings array
-     * @param  mixed $value1 The current $this->settings array or the recusive value
-     * @param  mixed $value2 The array of values to add or the recusive value
-     * @return array         The new array with all keys and values merged or updated
-     */
-    public function build($value1, $value2)
-    {
-        foreach($value2 as $key => $val)
-        {
-            if (is_array($value1))
-            {
-                if(array_key_exists($key, $value1) and is_array($val))
-                {
-                    $value1[$key] = $this->build($value1[$key], $value2[$key]);
-                }
-                else
-                {
-                    $value1[$key] = $val;
-                }
-            }
-            else
-            {
-                $value1 = array($key => $val);
-            }
-        }
-
-        return $value1;
     }
 
     /**
