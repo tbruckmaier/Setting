@@ -63,13 +63,22 @@ class SettingTest extends PHPUnit_Framework_TestCase {
     public function testArray_set()
     {
         $array = array();
-
         $this->setting->array_set($array,null,1);
         $this->assertEquals(array(),$array);
 
+        $array = array();
+        $this->setting->array_set($array,'','a');
+        $this->assertEquals(array(),$array);
+
+        $array = array();
+        $this->setting->array_set($array,'.','a');
+        $this->assertEquals(array(),$array);
+
+        $array = array();
         $this->setting->array_set($array,'a',null);
         $this->assertEquals(array(),$array);
 
+        $array = array();
         $this->setting->array_set($array,'a',array());
         $this->assertEquals(array('a'=>array()),$array);
 
