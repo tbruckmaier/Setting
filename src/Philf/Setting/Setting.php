@@ -23,19 +23,19 @@
  * has:     Setting::has('name')
  *
  * Multi dimensional
- * set:     Setting::set('names' , array('firstname' => 'Phil', 'surname' => 'F'))
- * get:     Setting::get('names.firstname')
- * forget:  Setting::forget(array('names' => 'surname'))
- * has:     Setting::has('names.firstname')
+ * set:     Setting::set('names' , array('firstName' => 'Phil', 'surname' => 'F'))
+ * get:     Setting::get('names.firstName')
+ * forget:  Setting::forget('names.surname'))
+ * has:     Setting::has('names.firstName')
  *
  * Using a different path (make sure the path exists and is writable) *
- * Setting::path('setting2.json')->set(array('names2' => array('firstname' => 'Phil', 'surname' => 'F')));
+ * Setting::path('setting2.json')->set(array('names2' => array('firstName' => 'Phil', 'surname' => 'F')));
  *
  * Using a different filename
- * Setting::filename('setting2.json')->set(array('names2' => array('firstname' => 'Phil', 'surname' => 'F')));
+ * Setting::filename('setting2.json')->set(array('names2' => array('firstName' => 'Phil', 'surname' => 'F')));
  *
  * Using both a different path and filename (make sure the path exists and is writable)
- * Setting::path(app_path().'/storage/meta/sub')->filename('dummy.json')->set(array('names2' => array('firstname' => 'Phil', 'surname' => 'F')));
+ * Setting::path(app_path().'/storage/meta/sub')->filename('dummy.json')->set(array('names2' => array('firstName' => 'Phil', 'surname' => 'F')));
  */
 
 class Setting {
