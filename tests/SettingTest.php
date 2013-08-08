@@ -24,6 +24,7 @@ class SettingTest extends PHPUnit_Framework_TestCase {
     {
         parent::setUp();
         $this->setting = new Setting('',$this->file);
+        $this->setting->clear();
     }
 
     /**
@@ -122,8 +123,9 @@ class SettingTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($this->setting->has('a'));
         $this->assertEquals(array('b' => 'c'), $this->setting->get('a'));
 
+        $this->setting->clear();
         $this->setting->set('', 'FOOBAR');
-        $this->assertNull($this->setting->get(''));
+        $this->assertEquals(array(),$this->setting->get(''));
 
         $this->setting->set('1.2.3.4.5.6.7.8', 'f');
         $this->assertTrue($this->setting->has('1.2.3.4'));
@@ -132,7 +134,6 @@ class SettingTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($this->setting->has('1.2.3.4.5.6.7.8.'));
         $this->assertEquals('f',$this->setting->get('1.2.3.4.5.6.7.8.'));
 
-        $this->setting->set(array(''), 'FOOBAR');
     }
 
     public function testForget()
@@ -150,5 +151,18 @@ class SettingTest extends PHPUnit_Framework_TestCase {
         $this->setting->forget('1.2.3.4.5.6.');
         $this->assertFalse($this->setting->has('1.2.3.4.5.6.'));
         $this->assertTrue($this->setting->has('1.2.3.4.5'));
+    }
+
+    public function testSetArray(){
+        $array = [
+            'id' => "foo",
+            'user_info' => [
+                'username' => "bar",
+                'recently_viewed' => false,
+            ]
+        ];
+        $this->setting->setArray($array);
+        $this->assertEquals($array, $this->setting->get());
+
     }
 }
