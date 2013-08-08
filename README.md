@@ -37,10 +37,6 @@ And add the ServiceProvider to the providers array in app/config/app.php
     // Automatic fallback to Laravel config
     Setting::get('app.locale');
 
-It's simple to use - just think arrays :)
-
-set is an alias for put so you can use either
-
 ##Single dimension
 
     set:     Setting::set('name', 'Phil')
