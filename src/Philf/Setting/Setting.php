@@ -217,7 +217,7 @@ class Setting {
         {
             if($segment === end($toWalk))
             {
-                if(array_key_exists($segment,$workArray))
+                if(is_array($workArray) and array_key_exists($segment,$workArray))
                 {
                     return $workArray[$segment];
                 }
