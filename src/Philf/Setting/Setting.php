@@ -17,27 +17,25 @@
  * use Setting (If you are using namespaces)
  *
  * Single dimension
- * set:     Setting::set(array('name' => 'Phil'))
- * put:     Setting::put(array('name' => 'Phil'))
+ * set:     Setting::set('name', 'Phil'))
  * get:     Setting::get('name')
  * forget:  Setting::forget('name')
  * has:     Setting::has('name')
  *
  * Multi dimensional
- * set:     Setting::set(array('names' => array('firstname' => 'Phil', 'surname' => 'F')))
- * put:     Setting::put(array('names' => array('firstname' => 'Phil', 'surname' => 'F')))
- * get:     Setting::get('names.firstname')
- * forget:  Setting::forget(array('names' => 'surname'))
- * has:     Setting::has('names.firstname')
+ * set:     Setting::set('names' , array('firstName' => 'Phil', 'surname' => 'F'))
+ * get:     Setting::get('names.firstName')
+ * forget:  Setting::forget('names.surname'))
+ * has:     Setting::has('names.firstName')
  *
  * Using a different path (make sure the path exists and is writable) *
- * Setting::path('setting2.json')->set(array('names2' => array('firstname' => 'Phil', 'surname' => 'F')));
+ * Setting::path('setting2.json')->set(array('names2' => array('firstName' => 'Phil', 'surname' => 'F')));
  *
  * Using a different filename
- * Setting::filename('setting2.json')->set(array('names2' => array('firstname' => 'Phil', 'surname' => 'F')));
+ * Setting::filename('setting2.json')->set(array('names2' => array('firstName' => 'Phil', 'surname' => 'F')));
  *
  * Using both a different path and filename (make sure the path exists and is writable)
- * Setting::path(app_path().'/storage/meta/sub')->filename('dummy.json')->set(array('names2' => array('firstname' => 'Phil', 'surname' => 'F')));
+ * Setting::path(app_path().'/storage/meta/sub')->filename('dummy.json')->set(array('names2' => array('firstName' => 'Phil', 'surname' => 'F')));
  */
 
 class Setting {
@@ -64,11 +62,13 @@ class Setting {
      * Create the Setting instance
      * @param string $path      The path to the file
      * @param string $filename  The filename
+     * @param interfaces\FallbackInterface $fallback
      */
-    public function __construct($path, $filename)
+    public function __construct($path, $filename, $fallback = null)
     {
         $this->path     = $path;
         $this->filename = $filename;
+        $this->fallback = $fallback;
 
         // Load the file and store the contents in $this->settings
         $this->load($this->path, $this->filename);
@@ -103,50 +103,40 @@ class Setting {
      */
     public function get($searchKey)
     {
-        return array_get($this->settings, $searchKey);
+        if($this->settings != $this->array_get($this->settings, $searchKey))
+        {
+            return $this->array_get($this->settings, $searchKey);
+        }
+
+        if(!is_null($this->fallback) and $this->fallback->fallbackHas($searchKey))
+        {
+            return $this->fallback->fallbackGet($searchKey);
+        }
+
+        return null;
     }
 
-    /**
-     * An alias for put
-     * @param mixed $value The value(s) to be stored
-     * @return void
-     */
-    public function set($value)
-    {
-        $this->put($value);
-    }
-
-    /**
+     /**
      * Store the passed value in to the json file
-     * @param  array $value The value(s) to be stored
+     * @param $key
+     * @param  mixed $value The value(s) to be stored
      * @return void
      */
-    public function put($value)
+    public function set($key, $value)
     {
-        $this->settings = $this->build($this->settings, $value);
+        $this->array_set($this->settings,$key,$value);
         $this->save($this->path, $this->filename);
         $this->load($this->path, $this->filename);
     }
 
     /**
      * Forget the value(s) currently stored
-     * @param  mixed $deleteKey The value(s) to be removed
+     * @param  mixed $deleteKey The value(s) to be removed (dot notation)
      * @return void
      */
     public function forget($deleteKey)
     {
-        if (is_array($deleteKey))
-        {
-            foreach($deleteKey as $key => $val)
-            {
-                unset($this->settings[$key][$val]);
-            }
-        }
-        else
-        {
-            unset($this->settings[$deleteKey]);
-        }
-
+        $this->array_delete($deleteKey);
         $this->save($this->path, $this->filename);
         $this->load($this->path, $this->filename);
     }
@@ -158,37 +148,11 @@ class Setting {
      */
     public function has($searchKey)
     {
-        return array_get($this->settings, $searchKey) ? true : false;
-    }
-
-    /**
-     * Recursively build the $this->settings array
-     * @param  mixed $value1 The current $this->settings array or the recusive value
-     * @param  mixed $value2 The array of values to add or the recusive value
-     * @return array         The new array with all keys and values merged or updated
-     */
-    public function build($value1, $value2)
-    {        
-        foreach($value2 as $key => $val)
+        if($this->settings == $this->array_get($this->settings, $searchKey) and !is_null($this->fallback))
         {
-            if (is_array($value1))
-            {
-                if(array_key_exists($key, $value1) and is_array($val))
-                {
-                    $value1[$key] = $this->build($value1[$key], $value2[$key]);
-                }
-                else
-                {
-                    $value1[$key] = $val;
-                }
-            }
-            else
-            {
-                $value1 = array($key => $val);
-            }
+            return $this->fallback->fallbackHas($searchKey);
         }
-        
-        return $value1;
+        return $this->settings == $this->array_get($this->settings, $searchKey) ? false : true;
     }
 
     /**
@@ -228,5 +192,103 @@ class Setting {
         $fh = fopen($this->path.'/'.$this->filename, 'w+');
         fwrite($fh, json_encode($this->settings, JSON_UNESCAPED_UNICODE));
         fclose($fh);
+    }
+
+    /**
+     * Get an item from an array using "dot" notation.
+     * Stole it from Illuminate/Support/helpers.php
+     *
+     * @param  array $array
+     * @param  string $key
+     * @internal param mixed $default
+     * @return mixed
+     */
+    function array_get($array, $key)
+    {
+        if (is_null($key) or is_null($key) or empty($key)) return $array;
+        $key = trim($key,'.');
+
+        if (isset($array[$key])) return $array[$key];
+
+        $toWalk = explode('.',$key);
+        $workArray = &$array;
+
+        foreach ($toWalk as $segment)
+        {
+            if($segment === end($toWalk))
+            {
+                if(array_key_exists($segment,$workArray))
+                {
+                    return $workArray[$segment];
+                }
+                else
+                {
+                    return $array;
+                }
+            }
+            if(!array_key_exists($segment,$workArray) or !is_array($workArray[$segment]))
+            {
+                return $array;
+            }
+            $workArray = &$workArray[$segment];
+        }
+        return $workArray;
+    }
+
+    /**
+     * Set an item in an array using "dot" notation.
+     * This method will manipulate the given array
+     *
+     * @param  array $array
+     * @param  string $key
+     * @param $value mixed The value to add
+     * @internal param mixed $default
+     * @return mixed
+     */
+    function array_set(&$array, $key, $value)
+    {
+        if (is_null($key) or is_null($value) or empty($key)) return $array;
+        $key = trim($key,'.');
+
+        $toWalk = explode('.',$key);
+        if(empty(array_filter($toWalk))) return $array;
+        $workArray = &$array;
+
+        foreach ($toWalk as $segment)
+        {
+            if($segment === end($toWalk))
+            {
+                $workArray[$segment] = $value;
+                return $array;
+            }
+
+            if((array_key_exists($segment,$workArray) and !is_array($workArray[$segment])) or (!array_key_exists($segment,$workArray)))
+            {
+                $workArray[$segment] = array();
+            }
+            $workArray = &$workArray[$segment];
+        }
+        return $array;
+    }
+
+    private function array_delete($key)
+    {
+        $key = trim($key,'.');
+        $toWalk = explode('.',$key);
+        $workArray = &$this->settings;
+
+        foreach($toWalk as $segment)
+        {
+            if($segment === end($toWalk))
+            {
+                unset($workArray[$segment]);
+                return;
+            }
+            if(!array_key_exists($segment,$workArray) or !is_array($workArray[$segment]))
+            {
+                return;
+            }
+            $workArray = &$workArray[$segment];
+        }
     }
 }
