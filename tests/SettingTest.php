@@ -131,6 +131,8 @@ class SettingTest extends PHPUnit_Framework_TestCase {
         $this->setting->set('1.2.3.4.5.6.7.8.', 'f');
         $this->assertTrue($this->setting->has('1.2.3.4.5.6.7.8.'));
         $this->assertEquals('f',$this->setting->get('1.2.3.4.5.6.7.8.'));
+
+        $this->setting->set(array(''), 'FOOBAR');
     }
 
     public function testForget()

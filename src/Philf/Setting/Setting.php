@@ -226,7 +226,7 @@ class Setting {
                     return $array;
                 }
             }
-            if(!array_key_exists($segment,$workArray) or !is_array($workArray[$segment]))
+            if(!is_array($workArray[$segment]) or !array_key_exists($segment,$workArray))
             {
                 return $array;
             }
@@ -269,7 +269,7 @@ class Setting {
                 return $array;
             }
 
-            if((array_key_exists($segment,$workArray) and !is_array($workArray[$segment])) or (!array_key_exists($segment,$workArray)))
+            if(!is_array($workArray[$segment]) and (array_key_exists($segment,$workArray)) or (!array_key_exists($segment,$workArray)))
             {
                 $workArray[$segment] = array();
             }
@@ -291,7 +291,7 @@ class Setting {
                 unset($workArray[$segment]);
                 return;
             }
-            if(!array_key_exists($segment,$workArray) or !is_array($workArray[$segment]))
+            if(!is_array($workArray[$segment]) or !array_key_exists($segment,$workArray))
             {
                 return;
             }
