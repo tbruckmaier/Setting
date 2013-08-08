@@ -251,7 +251,14 @@ class Setting {
         $key = trim($key,'.');
 
         $toWalk = explode('.',$key);
-        if(empty(array_filter($toWalk))) return $array;
+
+        $filtered = array_filter($toWalk);
+
+        if(empty($filtered))
+        {
+            return $array;  
+        } 
+
         $workArray = &$array;
 
         foreach ($toWalk as $segment)
