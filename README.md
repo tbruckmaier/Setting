@@ -25,7 +25,7 @@ And add the ServiceProvider to the providers array in app/config/app.php
 
 ## Usage
 
-#Config
+##Config
 
     return array(
     'path'     => app_path().'/storage/meta',
@@ -33,7 +33,7 @@ And add the ServiceProvider to the providers array in app/config/app.php
     'fallback' => true,
     );
 
-# Fallback capability built in. 
+##Fallback capability built in. 
     // Automatic fallback to Laravel config
     Setting::get('app.locale');
 
@@ -41,7 +41,7 @@ It's simple to use - just think arrays :)
 
 set is an alias for put so you can use either
 
-#Single dimension
+##Single dimension
 
     set:     Setting::set('name', 'Phil')
     get:     Setting::get('name')
