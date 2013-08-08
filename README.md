@@ -10,6 +10,10 @@ By default the data is stored in app_path().'/storage/meta/setting.json' but thi
 
 This package also provides a fallback for the Laravel Config facade, you can set it in the config, if the key is not found in the json file it will look it up in the Config facade.
 
+## Contributors
+    janhartigan (Treeface)
+    Nils Plaschke (Chumper)
+
 ## Installation
 Require this package in your composer.json:
 
@@ -21,7 +25,7 @@ And add the ServiceProvider to the providers array in app/config/app.php
 
 ## Usage
 
-Config
+#Config
 
     return array(
     'path'     => app_path().'/storage/meta',
@@ -29,18 +33,22 @@ Config
     'fallback' => true,
     );
 
+# Fallback capability built in. 
+    // Automatic fallback to Laravel config
+    Setting::get('app.locale');
+
 It's simple to use - just think arrays :)
 
 set is an alias for put so you can use either
 
-Single dimension
+#Single dimension
 
     set:     Setting::set('name', 'Phil')
     get:     Setting::get('name')
     forget:  Setting::forget('name')
     has:     Setting::has('name')
 
-Multi dimensional
+#Multi dimensional
 
     set:     Setting::set('names.firstName', 'Phil');
     set:     Setting::set('names.surname', 'F');
