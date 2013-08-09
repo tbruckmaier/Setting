@@ -111,15 +111,17 @@ class Setting {
      */
     public function get($searchKey = null)
     {
-        if(empty($searchKey))
+        if (empty($searchKey))
+        {
             return $this->settings;
+        }
 
-        if($this->settings != $this->array_get($this->settings, $searchKey))
+        if ($this->settings != $this->array_get($this->settings, $searchKey))
         {
             return $this->array_get($this->settings, $searchKey);
         }
 
-        if(!is_null($this->fallback) and $this->fallback->fallbackHas($searchKey))
+        if (!is_null($this->fallback) and $this->fallback->fallbackHas($searchKey))
         {
             return $this->fallback->fallbackGet($searchKey);
         }
@@ -159,10 +161,11 @@ class Setting {
      */
     public function has($searchKey)
     {
-        if($this->settings == $this->array_get($this->settings, $searchKey) and !is_null($this->fallback))
+        if ($this->settings == $this->array_get($this->settings, $searchKey) and !is_null($this->fallback))
         {
             return $this->fallback->fallbackHas($searchKey);
         }
+
         return $this->settings == $this->array_get($this->settings, $searchKey) ? false : true;
     }
 
@@ -219,11 +222,13 @@ class Setting {
      * This will mass assign data to the Setting
      * @param array $data
      */
-    public function setArray(array $data){
+    public function setArray(array $data)
+    {
         foreach ($data as $key => $value)
         {
             $this->array_set($this->settings,$key,$value);
         }
+
         $this->save($this->path, $this->filename);
         $this->load($this->path, $this->filename);
     }
@@ -239,19 +244,26 @@ class Setting {
      */
     function array_get($array, $key)
     {
-        if (is_null($key) or is_null($key) or empty($key)) return $array;
+        if (is_null($key) or is_null($key) or empty($key))
+        {
+            return $array;
+        }
+
         $key = trim($key,'.');
 
-        if (isset($array[$key])) return $array[$key];
+        if (isset($array[$key]))
+        {
+            return $array[$key];
+        }
 
-        $toWalk = explode('.',$key);
+        $toWalk    = explode('.',$key);
         $workArray = &$array;
 
         foreach ($toWalk as $segment)
         {
-            if($segment === end($toWalk))
+            if ($segment === end($toWalk))
             {
-                if(is_array($workArray) and array_key_exists($segment,$workArray))
+                if (is_array($workArray) and array_key_exists($segment,$workArray))
                 {
                     return $workArray[$segment];
                 }
@@ -260,12 +272,15 @@ class Setting {
                     return $array;
                 }
             }
-            if(!is_array($workArray) or !array_key_exists($segment,$workArray))
+
+            if (!is_array($workArray) or !array_key_exists($segment,$workArray))
             {
                 return $array;
             }
+
             $workArray = &$workArray[$segment];
         }
+
         return $workArray;
     }
 
@@ -281,14 +296,16 @@ class Setting {
      */
     function array_set(&$array, $key, $value)
     {
-        if (is_null($key) or is_null($value) or empty($key)) return $array;
-        $key = trim($key,'.');
+        if (is_null($key) or is_null($value) or empty($key))
+        {
+            return $array;
+        }
 
-        $toWalk = explode('.',$key);
-
+        $key      = trim($key,'.');        
+        $toWalk   = explode('.',$key);        
         $filtered = array_filter($toWalk);
 
-        if(empty($filtered))
+        if (empty($filtered))
         {
             return $array;  
         } 
@@ -297,21 +314,25 @@ class Setting {
 
         foreach ($toWalk as $segment)
         {
-            if($segment === end($toWalk))
+            if ($segment === end($toWalk))
             {
                 $workArray[$segment] = $value;
                 return $array;
             }
-            if(!is_array($workArray))
+
+            if (!is_array($workArray))
             {
                 $workArray = array();
             }
-            if(!array_key_exists($segment,$workArray) or !is_array($workArray[$segment]))
+
+            if (!array_key_exists($segment,$workArray) or !is_array($workArray[$segment]))
             {
                 $workArray[$segment] = array();
             }
+
             $workArray = &$workArray[$segment];
         }
+
         return $array;
     }
 
@@ -320,21 +341,23 @@ class Setting {
      */
     private function array_delete($key)
     {
-        $key = trim($key,'.');
-        $toWalk = explode('.',$key);
+        $key       = trim($key,'.');
+        $toWalk    = explode('.',$key);
         $workArray = &$this->settings;
 
-        foreach($toWalk as $segment)
+        foreach ($toWalk as $segment)
         {
-            if($segment === end($toWalk))
+            if ($segment === end($toWalk))
             {
                 unset($workArray[$segment]);
                 return;
             }
-            if(!is_array($workArray) or !array_key_exists($segment,$workArray))
+
+            if (!is_array($workArray) or !array_key_exists($segment,$workArray))
             {
                 return;
             }
+
             $workArray = &$workArray[$segment];
         }
     }
