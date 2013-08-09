@@ -220,7 +220,8 @@ class Setting {
      * @param array $data
      */
     public function setArray(array $data){
-        foreach ($data as $key => $value) {
+        foreach ($data as $key => $value)
+        {
             $this->array_set($this->settings,$key,$value);
         }
         $this->save($this->path, $this->filename);
