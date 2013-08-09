@@ -17,16 +17,20 @@
  * use Setting (If you are using namespaces)
  *
  * Single dimension
- * set:     Setting::set('name', 'Phil'))
- * get:     Setting::get('name')
- * forget:  Setting::forget('name')
- * has:     Setting::has('name')
+ * set:         Setting::set('name', 'Phil'))
+ * get:         Setting::get('name')
+ * forget:      Setting::forget('name')
+ * has:         Setting::has('name')
  *
  * Multi dimensional
- * set:     Setting::set('names' , array('firstName' => 'Phil', 'surname' => 'F'))
- * get:     Setting::get('names.firstName')
- * forget:  Setting::forget('names.surname'))
- * has:     Setting::has('names.firstName')
+ * set:         Setting::set('names' , array('firstName' => 'Phil', 'surname' => 'F'))
+ * setArray:    Setting::setArray(array('firstName' => 'Phil', 'surname' => 'F'))
+ * get:         Setting::get('names.firstName')
+ * forget:      Setting::forget('names.surname'))
+ * has:         Setting::has('names.firstName')
+ *
+ * Clear:
+ * clear:        Setting::clear()
  *
  * Using a different path (make sure the path exists and is writable) *
  * Setting::path('setting2.json')->set(array('names2' => array('firstName' => 'Phil', 'surname' => 'F')));

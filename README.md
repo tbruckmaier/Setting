@@ -39,20 +39,25 @@ And add the ServiceProvider to the providers array in app/config/app.php
 
 ##Single dimension
 
-    set:     Setting::set('name', 'Phil')
-    get:     Setting::get('name')
-    forget:  Setting::forget('name')
-    has:     Setting::has('name')
+    set:        Setting::set('name', 'Phil')
+    get:        Setting::get('name')
+    forget:     Setting::forget('name')
+    has:        Setting::has('name')
 
 #Multi dimensional
 
-    set:     Setting::set('names.firstName', 'Phil');
-    set:     Setting::set('names.surname', 'F');
+    set:        Setting::set('names.firstName', 'Phil')
+    set:        Setting::set('names.surname', 'F')
         or
-    set:     Setting::set('names', array('firstName' => 'Phil', 'surname' => 'F'));
-    get:     Setting::get('names.firstName')
-    forget:  Setting::forget('names.surname'))
-    has:     Setting::has('names.firstName')
+    set:        Setting::set('names', array('firstName' => 'Phil', 'surname' => 'F'))
+    setArray:   Setting::setArray(array('firstName' => 'Phil', 'surname' => 'F'))
+    get:        Setting::get('names.firstName')
+    forget:     Setting::forget('names.surname'))
+    has:        Setting::has('names.firstName')
+
+You can also clear the JSON file if the clear command
+
+    clear:      Setting::clear()
 
 Using a different path (make sure the path exists and is writable) *
 
