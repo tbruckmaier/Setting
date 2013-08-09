@@ -55,7 +55,7 @@ And add the ServiceProvider to the providers array in app/config/app.php
     forget:     Setting::forget('names.surname'))
     has:        Setting::has('names.firstName')
 
-You can also clear the JSON file if the clear command
+You can also clear the JSON file with the clear command
 
     clear:      Setting::clear()
 
