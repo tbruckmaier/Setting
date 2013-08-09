@@ -38,6 +38,10 @@
  * Setting::path(app_path().'/storage/meta/sub')->filename('dummy.json')->set(array('names2' => array('firstName' => 'Phil', 'surname' => 'F')));
  */
 
+/**
+ * Class Setting
+ * @package Philf\Setting
+ */
 class Setting {
 
     /**
@@ -101,8 +105,11 @@ class Setting {
      * @param  string $searchKey String using dot notation
      * @return Mixed             The value(s) found
      */
-    public function get($searchKey)
+    public function get($searchKey = null)
     {
+        if(empty($searchKey))
+            return $this->settings;
+
         if($this->settings != $this->array_get($this->settings, $searchKey))
         {
             return $this->array_get($this->settings, $searchKey);
@@ -195,6 +202,28 @@ class Setting {
     }
 
     /**
+     * Clears the JSON Config file
+     */
+    public function clear()
+    {
+        $this->settings = array();
+        $this->save($this->path, $this->filename);
+        $this->load($this->path, $this->filename);
+    }
+
+    /**
+     * This will mass assign data to the Setting
+     * @param array $data
+     */
+    public function setArray(array $data){
+        foreach ($data as $key => $value) {
+            $this->array_set($this->settings,$key,$value);
+        }
+        $this->save($this->path, $this->filename);
+        $this->load($this->path, $this->filename);
+    }
+
+    /**
      * Get an item from an array using "dot" notation.
      * Stole it from Illuminate/Support/helpers.php
      *
@@ -226,7 +255,7 @@ class Setting {
                     return $array;
                 }
             }
-            if(!is_array($workArray[$segment]) or !array_key_exists($segment,$workArray))
+            if(!is_array($workArray) or !array_key_exists($segment,$workArray))
             {
                 return $array;
             }
@@ -268,8 +297,11 @@ class Setting {
                 $workArray[$segment] = $value;
                 return $array;
             }
-
-            if(!is_array($workArray[$segment]) and (array_key_exists($segment,$workArray)) or (!array_key_exists($segment,$workArray)))
+            if(!is_array($workArray))
+            {
+                $workArray = array();
+            }
+            if(!array_key_exists($segment,$workArray) or !is_array($workArray[$segment]))
             {
                 $workArray[$segment] = array();
             }
@@ -278,6 +310,9 @@ class Setting {
         return $array;
     }
 
+    /**
+     * @param $key
+     */
     private function array_delete($key)
     {
         $key = trim($key,'.');
@@ -291,7 +326,7 @@ class Setting {
                 unset($workArray[$segment]);
                 return;
             }
-            if(!is_array($workArray[$segment]) or !array_key_exists($segment,$workArray))
+            if(!is_array($workArray) or !array_key_exists($segment,$workArray))
             {
                 return;
             }
