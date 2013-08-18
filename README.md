@@ -51,6 +51,10 @@ And add the ServiceProvider to the providers array in app/config/app.php
         or
     set:        Setting::set('names', array('firstName' => 'Phil', 'surname' => 'F'))
     setArray:   Setting::setArray(array('firstName' => 'Phil', 'surname' => 'F'))
+
+    // To change a pre stored value in the array without overwriting the whole array
+    set:        Setting::set('names.firstName', 'Phillip')
+
     get:        Setting::get('names.firstName')
     forget:     Setting::forget('names.surname'))
     has:        Setting::has('names.firstName')
