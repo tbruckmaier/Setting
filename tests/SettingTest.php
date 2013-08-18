@@ -78,13 +78,13 @@ class SettingTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSetArray(){
-        $array = [
+        $array = array(
             'id' => "foo",
-            'user_info' => [
+            'user_info' => array(
                 'username' => "bar",
                 'recently_viewed' => false,
-            ]
-        ];
+            )
+        );
         $this->setting->setArray($array);
         $this->assertEquals($array, $this->setting->get());
 
