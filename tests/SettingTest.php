@@ -15,7 +15,7 @@ class SettingTest extends PHPUnit_Framework_TestCase {
     /**
      * @var string The file name of the config
      */
-    private $file = 'test/test.json';
+    private $file = 'test.json';
 
     /**
      * Set Up
@@ -32,8 +32,8 @@ class SettingTest extends PHPUnit_Framework_TestCase {
      */
     public function tearDown()
     {
-        if(file_exists($this->file))
-            unlink($this->file);
+        if(file_exists('test/'.$this->file))
+            unlink('test/'.$this->file);
     }
 
     public function testSet()
