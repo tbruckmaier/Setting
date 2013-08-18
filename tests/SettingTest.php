@@ -15,7 +15,7 @@ class SettingTest extends PHPUnit_Framework_TestCase {
     /**
      * @var string The file name of the config
      */
-    private $file = 'test.json';
+    private $file = 'test/test.json';
 
     /**
      * Set Up
