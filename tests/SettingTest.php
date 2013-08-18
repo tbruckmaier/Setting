@@ -77,6 +77,18 @@ class SettingTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($this->setting->has('1.2.3.4.5'));
     }
 
+    public function testUnicode()
+    {
+        $this->setting->set('a', 'Hälfte');
+        $this->setting->set('b', 'Höfe');
+        $this->setting->set('c', 'Hüfte');
+        $this->setting->set('d', 'saß');
+        $this->assertEquals('Hälfte', $this->setting->get('a'));
+        $this->assertEquals('Höfe', $this->setting->get('b'));
+        $this->assertEquals('Hüfte', $this->setting->get('c'));
+        $this->assertEquals('saß', $this->setting->get('d'));
+    }
+
     public function testSetArray(){
         $array = [
             'id' => "foo",
