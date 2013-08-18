@@ -46,7 +46,7 @@
  * Class Setting
  * @package Philf\Setting
  */
-class Setting {
+class Setting{
 
     /**
      * The path to the file
@@ -116,12 +116,14 @@ class Setting {
             return $this->settings;
         }
 
-        if ($this->settings != $this->array_get($this->settings, $searchKey))
+        $default = microtime(true);
+
+        if ($default != $this->array_get($this->settings, $searchKey, $default))
         {
             return $this->array_get($this->settings, $searchKey);
         }
 
-        if (!is_null($this->fallback) and $this->fallback->fallbackHas($searchKey))
+        if ( ! is_null($this->fallback) and $this->fallback->fallbackHas($searchKey))
         {
             return $this->fallback->fallbackGet($searchKey);
         }
@@ -149,7 +151,7 @@ class Setting {
      */
     public function forget($deleteKey)
     {
-        $this->array_delete($deleteKey);
+        $this->array_forget($this->settings,$deleteKey);
         $this->save($this->path, $this->filename);
         $this->load($this->path, $this->filename);
     }
@@ -161,12 +163,13 @@ class Setting {
      */
     public function has($searchKey)
     {
-        if ($this->settings == $this->array_get($this->settings, $searchKey) and !is_null($this->fallback))
+        $default = microtime(true);
+
+        if ($default == $this->array_get($this->settings, $searchKey, $default) and !is_null($this->fallback))
         {
             return $this->fallback->fallbackHas($searchKey);
         }
-
-        return $this->settings == $this->array_get($this->settings, $searchKey) ? false : true;
+        return $default != $this->array_get($this->settings, $searchKey, $default);
     }
 
     /**
@@ -234,131 +237,97 @@ class Setting {
     }
 
     /**
+    * Get an item from an array using "dot" notation.
+    * Stole it from Illuminate/Support/helpers.php
+    *
+    * @param array $array
+    * @param string $key
+    * @internal param mixed $default
+    * @return mixed
+    */
+    protected function array_set(&$array, $key, $value)
+    {
+        if (is_null($key))
+        {
+            return $array = $value;
+        }
+
+        $keys = explode('.', $key);
+
+        while (count($keys) > 1)
+        {
+            $key = array_shift($keys);
+
+            // If the key doesn't exist at this depth, we will just create an empty array
+            // to hold the next value, allowing us to create the arrays to hold final
+            // values at the correct depth. Then we'll keep digging into the array.
+            if ( ! isset($array[$key]) or ! is_array($array[$key]))
+            {
+                $array[$key] = array();
+            }
+
+            $array =& $array[$key];
+        }
+
+        $array[array_shift($keys)] = $value;
+    }
+
+     /**
      * Get an item from an array using "dot" notation.
-     * Stole it from Illuminate/Support/helpers.php
      *
-     * @param  array $array
-     * @param  string $key
-     * @internal param mixed $default
+     * @param  array   $array
+     * @param  string  $key
+     * @param  mixed   $default
      * @return mixed
      */
-    function array_get($array, $key)
+    protected function array_get($array, $key, $default = null)
     {
-        if (is_null($key) or is_null($key) or empty($key))
+        if (is_null($key))
         {
             return $array;
         }
-
-        $key = trim($key,'.');
 
         if (isset($array[$key]))
         {
             return $array[$key];
         }
 
-        $toWalk    = explode('.',$key);
-        $workArray = &$array;
-
-        foreach ($toWalk as $segment)
+        foreach (explode('.', $key) as $segment)
         {
-            if ($segment === end($toWalk))
+            if ( ! is_array($array) or ! array_key_exists($segment, $array))
             {
-                if (is_array($workArray) and array_key_exists($segment,$workArray))
-                {
-                    return $workArray[$segment];
-                }
-                else
-                {
-                    return $array;
-                }
+                return value($default);
             }
 
-            if (!is_array($workArray) or !array_key_exists($segment,$workArray))
-            {
-                return $array;
-            }
-
-            $workArray = &$workArray[$segment];
-        }
-
-        return $workArray;
-    }
-
-    /**
-     * Set an item in an array using "dot" notation.
-     * This method will manipulate the given array
-     *
-     * @param  array $array
-     * @param  string $key
-     * @param $value mixed The value to add
-     * @internal param mixed $default
-     * @return mixed
-     */
-    function array_set(&$array, $key, $value)
-    {
-        if (is_null($key) or is_null($value) or empty($key))
-        {
-            return $array;
-        }
-
-        $key      = trim($key,'.');        
-        $toWalk   = explode('.',$key);        
-        $filtered = array_filter($toWalk);
-
-        if (empty($filtered))
-        {
-            return $array;  
-        } 
-
-        $workArray = &$array;
-
-        foreach ($toWalk as $segment)
-        {
-            if ($segment === end($toWalk))
-            {
-                $workArray[$segment] = $value;
-                return $array;
-            }
-
-            if (!is_array($workArray))
-            {
-                $workArray = array();
-            }
-
-            if (!array_key_exists($segment,$workArray) or !is_array($workArray[$segment]))
-            {
-                $workArray[$segment] = array();
-            }
-
-            $workArray = &$workArray[$segment];
+            $array = $array[$segment];
         }
 
         return $array;
     }
 
     /**
-     * @param $key
+     * Remove an array item from a given array using "dot" notation.
+     *
+     * @param  array   $array
+     * @param  string  $key
+     * @return void
      */
-    private function array_delete($key)
+    protected function array_forget(&$array, $key)
     {
-        $key       = trim($key,'.');
-        $toWalk    = explode('.',$key);
-        $workArray = &$this->settings;
+        $keys = explode('.', $key);
 
-        foreach ($toWalk as $segment)
+        while (count($keys) > 1)
         {
-            if ($segment === end($toWalk))
-            {
-                unset($workArray[$segment]);
-                return;
-            }
+            $key = array_shift($keys);
 
-            if (!is_array($workArray) or !array_key_exists($segment,$workArray))
+            if ( ! isset($array[$key]) or ! is_array($array[$key]))
             {
                 return;
             }
 
-            $workArray = &$workArray[$segment];
+            $array =& $array[$key];
         }
+
+        unset($array[array_shift($keys)]);
     }
 }
