@@ -206,8 +206,10 @@ class Setting {
         $this->path     = isset($path) ? $path : $this->path;
         $this->filename = isset($filename) ? $filename : $this->filename;
 
-        if(!file_exists($this->path))
+        if ( ! file_exists($this->path))
+        {
             mkdir($this->path, 0755, true);
+        }
 
         $fh = fopen($this->path.'/'.$this->filename, 'w+');
         fwrite($fh, json_encode($this->settings, JSON_UNESCAPED_UNICODE));
