@@ -212,7 +212,7 @@ class Setting {
         }
 
         $fh = fopen($this->path.'/'.$this->filename, 'w+');
-        fwrite($fh, json_encode($this->settings, JSON_UNESCAPED_UNICODE));
+        fwrite($fh, json_encode($this->settings));
         fclose($fh);
     }
 
