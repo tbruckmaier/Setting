@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/[Phil-F]/[Setting].png)](https://travis-ci.org/[Phil-F]/[Setting])
+[![Build Status](https://travis-ci.org/Phil-F/Setting.png)](https://travis-ci.org/Phil-F/Setting)
 
 # Laravel Setting
 
