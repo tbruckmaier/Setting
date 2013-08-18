@@ -46,7 +46,7 @@
  * Class Setting
  * @package Philf\Setting
  */
-class Setting{
+class Setting {
 
     /**
      * The path to the file
@@ -118,9 +118,9 @@ class Setting{
 
         $default = microtime(true);
 
-        if ($default != $this->array_get($this->settings, $searchKey, $default))
+        if($default != array_get($this->settings, $searchKey, $default))
         {
-            return $this->array_get($this->settings, $searchKey);
+            return array_get($this->settings, $searchKey);
         }
 
         if ( ! is_null($this->fallback) and $this->fallback->fallbackHas($searchKey))
@@ -139,7 +139,7 @@ class Setting{
      */
     public function set($key, $value)
     {
-        $this->array_set($this->settings,$key,$value);
+        array_set($this->settings,$key,$value);
         $this->save($this->path, $this->filename);
         $this->load($this->path, $this->filename);
     }
@@ -151,7 +151,7 @@ class Setting{
      */
     public function forget($deleteKey)
     {
-        $this->array_forget($this->settings,$deleteKey);
+        array_forget($this->settings,$deleteKey);
         $this->save($this->path, $this->filename);
         $this->load($this->path, $this->filename);
     }
@@ -165,11 +165,11 @@ class Setting{
     {
         $default = microtime(true);
 
-        if ($default == $this->array_get($this->settings, $searchKey, $default) and !is_null($this->fallback))
+        if($default == array_get($this->settings, $searchKey, $default) and !is_null($this->fallback))
         {
             return $this->fallback->fallbackHas($searchKey);
         }
-        return $default != $this->array_get($this->settings, $searchKey, $default);
+        return $default != array_get($this->settings, $searchKey, $default);
     }
 
     /**
@@ -206,6 +206,9 @@ class Setting{
         $this->path     = isset($path) ? $path : $this->path;
         $this->filename = isset($filename) ? $filename : $this->filename;
 
+        if(!file_exists($this->path))
+            mkdir($this->path, 0755, true);
+
         $fh = fopen($this->path.'/'.$this->filename, 'w+');
         fwrite($fh, json_encode($this->settings, JSON_UNESCAPED_UNICODE));
         fclose($fh);
@@ -229,105 +232,10 @@ class Setting{
     {
         foreach ($data as $key => $value)
         {
-            $this->array_set($this->settings,$key,$value);
+            array_set($this->settings,$key,$value);
         }
 
         $this->save($this->path, $this->filename);
         $this->load($this->path, $this->filename);
-    }
-
-    /**
-    * Get an item from an array using "dot" notation.
-    * Stole it from Illuminate/Support/helpers.php
-    *
-    * @param array $array
-    * @param string $key
-    * @internal param mixed $default
-    * @return mixed
-    */
-    protected function array_set(&$array, $key, $value)
-    {
-        if (is_null($key))
-        {
-            return $array = $value;
-        }
-
-        $keys = explode('.', $key);
-
-        while (count($keys) > 1)
-        {
-            $key = array_shift($keys);
-
-            // If the key doesn't exist at this depth, we will just create an empty array
-            // to hold the next value, allowing us to create the arrays to hold final
-            // values at the correct depth. Then we'll keep digging into the array.
-            if ( ! isset($array[$key]) or ! is_array($array[$key]))
-            {
-                $array[$key] = array();
-            }
-
-            $array =& $array[$key];
-        }
-
-        $array[array_shift($keys)] = $value;
-    }
-
-     /**
-     * Get an item from an array using "dot" notation.
-     *
-     * @param  array   $array
-     * @param  string  $key
-     * @param  mixed   $default
-     * @return mixed
-     */
-    protected function array_get($array, $key, $default = null)
-    {
-        if (is_null($key))
-        {
-            return $array;
-        }
-
-        if (isset($array[$key]))
-        {
-            return $array[$key];
-        }
-
-        foreach (explode('.', $key) as $segment)
-        {
-            if ( ! is_array($array) or ! array_key_exists($segment, $array))
-            {
-                return value($default);
-            }
-
-            $array = $array[$segment];
-        }
-
-        return $array;
-    }
-
-    /**
-     * Remove an array item from a given array using "dot" notation.
-     *
-     * @param  array   $array
-     * @param  string  $key
-     * @return void
-     */
-    protected function array_forget(&$array, $key)
-    {
-        $keys = explode('.', $key);
-
-        while (count($keys) > 1)
-        {
-            $key = array_shift($keys);
-
-            if ( ! isset($array[$key]) or ! is_array($array[$key]))
-            {
-                return;
-            }
-
-            $array =& $array[$key];
-        }
-
-        unset($array[array_shift($keys)]);
     }
 }
