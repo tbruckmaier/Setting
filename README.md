@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/[Phil-F]/[Setting].png)](https://travis-ci.org/[Phil-F]/[Setting])
+
 # Laravel Setting
 
 Persistent configuration settings for Laravel - Create, Read, Update and Delete settings stored in files using JSON.
