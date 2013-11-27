@@ -109,7 +109,7 @@ class Setting {
      * @param  string $searchKey String using dot notation
      * @return Mixed             The value(s) found
      */
-    public function get($searchKey = null)
+    public function get($searchKey = null, $fallback = null)
     {
         if (empty($searchKey))
         {
@@ -128,7 +128,7 @@ class Setting {
             return $this->fallback->fallbackGet($searchKey);
         }
 
-        return null;
+        return ($fallback ?: null);
     }
 
      /**
