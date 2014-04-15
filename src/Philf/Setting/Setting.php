@@ -118,7 +118,7 @@ class Setting {
 
         $default = microtime(true);
 
-        if($default != array_get($this->settings, $searchKey, $default))
+        if($default !== array_get($this->settings, $searchKey, $default))
         {
             return array_get($this->settings, $searchKey);
         }
@@ -169,7 +169,7 @@ class Setting {
         {
             return $this->fallback->fallbackHas($searchKey);
         }
-        return $default != array_get($this->settings, $searchKey, $default);
+        return $default !== array_get($this->settings, $searchKey, $default);
     }
 
     /**

@@ -60,6 +60,17 @@ class SettingTest extends PHPUnit_Framework_TestCase {
 
     }
 
+    public function testSetBooleans()
+    {
+        $this->setting->set('isFalse', false);
+        $this->assertTrue($this->setting->has('isFalse'));
+        $this->assertSame(false, $this->setting->get('isFalse'));
+
+        $this->setting->set('isTrue', true);
+        $this->assertTrue($this->setting->has('isTrue'));
+        $this->assertSame(true, $this->setting->get('isTrue'));
+    }
+
     public function testForget()
     {
         $this->setting->set('a.b.c.d.e', 'f');
