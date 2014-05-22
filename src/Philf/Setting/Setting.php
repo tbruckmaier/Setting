@@ -128,7 +128,7 @@ class Setting {
             return $this->fallback->fallbackGet($searchKey);
         }
 
-        return ($fallback ?: null);
+        return $fallback;
     }
 
      /**
