@@ -36,11 +36,14 @@ class SettingServiceProvider extends ServiceProvider {
             
             return new Setting($path, $filename, $app['config']['setting::setting.fallback'] ? new LaravelFallbackInterface() : null);
         });
-
-        $this->app->booting(function()
+        
+        $this->app->booting(function($app)
         {
-          $loader = \Illuminate\Foundation\AliasLoader::getInstance();
-          $loader->alias('Setting', 'Philf\Setting\Facades\Setting');
+            if ($app['config']['setting::setting.autoAlias'])
+            {
+                $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+                $loader->alias('Setting', 'Philf\Setting\Facades\Setting');
+            }
         });
     }
 
