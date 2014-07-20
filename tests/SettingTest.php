@@ -23,7 +23,7 @@ class SettingTest extends PHPUnit_Framework_TestCase {
     protected function setUp()
     {
         parent::setUp();
-        $this->setting = new Setting('test',$this->file);
+        $this->setting = new Setting(sys_get_temp_dir(), $this->file);
         $this->setting->clear();
     }
 
@@ -111,5 +111,10 @@ class SettingTest extends PHPUnit_Framework_TestCase {
         $this->setting->setArray($array);
         $this->assertEquals($array, $this->setting->get());
 
+    }
+
+    public function testGet() {
+        $value = $this->setting->get("key that doesn't exist", 0);
+        $this->assertSame(0, $value);
     }
 }
