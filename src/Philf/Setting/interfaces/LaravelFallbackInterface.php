@@ -11,9 +11,9 @@ class LaravelFallbackInterface implements FallbackInterface {
      * @param $key
      * @return mixed
      */
-    public function fallbackGet($key)
+    public function fallbackGet($key, $default = null)
     {
-        return \App::make('config')->get($key);
+        return \App::make('config')->get($key, $default);
     }
 
     /**
